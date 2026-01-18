@@ -1,0 +1,89 @@
+﻿@model IEnumerable<UniversityCanteenFoodOrderingSystem.Models.MenuItem>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_AdminMaster.cshtml";
+}
+
+<h1>Menu Items</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Add New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Category)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Price)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Availability)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ImageUrl)
+            </th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Category)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Price)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Availability)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ImageUrl)
+            </td>
+            <td>
+                    <a asp-action="Edit" class="btn btn-success" asp-route-id="@item.ItemId">Edit</a> |
+                    <a asp-action="Details" class="btn btn-info" asp-route-id="@item.ItemId">Details</a> |
+                    <a asp-action="Delete" class="btn btn-danger" asp-route-id="@item.ItemId">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+
+@section Scripts {
+
+    @* Alert on Role *@
+    @if (TempData["Message"] != null)
+    {
+        <script>
+            Swal.fire({
+                toast: true,
+                position: "top-end",
+                icon: "success",
+                title: "@TempData["Message"]",
+                showConfirmButton: false,
+                timer: 3000
+            });
+        </script>
+    }
+    else if (TempData["Error"] != null)
+    {
+        <script>
+            Swal.fire({
+                position: "top-end",
+                icon: "error",
+                title: "@TempData["Error"]",
+                showConfirmButton: true
+            });
+        </script>
+    }
+}

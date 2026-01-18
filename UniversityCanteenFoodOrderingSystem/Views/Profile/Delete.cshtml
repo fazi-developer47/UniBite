@@ -1,0 +1,27 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+
+@model UniversityCanteenFoodOrderingSystem.Areas.Identity.Data.AppUser
+@{
+    ViewData["Title"] = "Delete Account";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>My Profile</h2>
+<div class="card p-3 shadow-sm">
+    <p><strong>Full Name:</strong> @Model.FullName</p>
+    <p><strong>Email:</strong> @Model.Email</p>
+    <p><strong>Phone Number:</strong> @Model.PhoneNumber</p>
+
+    <a asp-action="Edit" class="btn btn-primary">Edit Profile</a>
+
+    <form asp-action="Delete" method="post" class="d-inline">
+        <button type="submit" class="btn btn-danger"
+                onclick="return confirm('Are you sure you want to delete your account?');">
+            Delete Account
+        </button>
+    </form>
+</div>

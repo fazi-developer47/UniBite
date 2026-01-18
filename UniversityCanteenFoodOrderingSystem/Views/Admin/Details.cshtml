@@ -1,0 +1,70 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+
+@model UniversityCanteenFoodOrderingSystem.Areas.Identity.Data.AppUser
+@{
+    Layout = "~/Views/Shared/_AdminMaster.cshtml";
+    ViewData["Title"] = "Admin Profile";
+}
+
+<h2>My Profile</h2>
+
+<div class="card mt-3">
+    <div class="card-body">
+        <dl class="row">
+            <dt class="col-sm-3">Id</dt>
+            <dd class="col-sm-9">@Model.Id</dd>
+
+            <dt class="col-sm-3">Email</dt>
+            <dd class="col-sm-9">@Model.Email</dd>
+
+            <dt class="col-sm-3">Full Name</dt>
+            <dd class="col-sm-9">@Model.FullName</dd>
+
+            <dt class="col-sm-3">User Type</dt>
+            <dd class="col-sm-9">@Model.UserType</dd>
+
+            <dt class="col-sm-3">Registered On</dt>
+            <dd class="col-sm-9">@Model.RegisteredOn.ToString("dd-MMM-yyyy")</dd>
+        </dl>
+    </div>
+</div>
+
+<div class="mt-3">
+    <a asp-controller="Admin" asp-action="Edit" class="btn btn-primary">Edit</a>
+    <a asp-page="/Account/Manage/ChangePassword" asp-area="Identity" class="btn btn-warning">Change Password</a>
+    <a asp-controller="Admin" asp-action="Index" class="btn btn-secondary">Back to List</a>
+</div>
+
+@section Scripts {
+
+    @*Alert on Profile*@
+    @if (TempData["Message"] != null)
+    {
+        <script>
+            Swal.fire({
+                toast: true,
+                position: "top-end",
+                icon: "success",
+                title: "@TempData["Message"]",
+                showConfirmButton: false,
+                timer: 3000
+            });
+        </script>
+    }
+    else if (TempData["Error"] != null)
+    {
+        <script>
+            Swal.fire({
+                position: "top-end",
+                icon: "error",
+                title: "@TempData["Error"]",
+                showConfirmButton: true
+            });
+        </script>
+    }
+
+}

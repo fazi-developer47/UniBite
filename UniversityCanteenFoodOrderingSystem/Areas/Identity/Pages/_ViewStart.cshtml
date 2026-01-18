@@ -1,0 +1,17 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using UniversityCanteenFoodOrderingSystem.Areas.Identity.Data
+@inject SignInManager<AppUser> SignInManager
+@inject UserManager<AppUser> UserManager
+
+@{
+    var currentUser = await UserManager.GetUserAsync(User);
+
+    if (SignInManager.IsSignedIn(User) && currentUser != null && await UserManager.IsInRoleAsync(currentUser, "Admin"))
+    {
+        Layout = "/Views/Shared/_AdminMaster.cshtml"; // Admin layout
+    }
+    else
+    {
+        Layout = "/Views/Shared/_Layout.cshtml"; // Normal user layout
+    }
+}

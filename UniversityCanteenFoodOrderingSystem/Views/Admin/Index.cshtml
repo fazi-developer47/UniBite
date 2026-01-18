@@ -1,0 +1,243 @@
+﻿@{
+    ViewData["Title"] = "Admin Dashboard";
+    Layout = "~/Views/Shared/_AdminMaster.cshtml";
+}
+
+<div class="container-fluid">
+
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Admin Dashboard</h1>
+        <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+            <i class="fas fa-download fa-sm text-white-50"></i> Generate Report
+        </a>
+    </div>
+
+    <!-- Top Metrics Row -->
+    <div class="row">
+        <!-- Registered Users -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Registered Users</div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800">@ViewBag.TotalUsers</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Menu Items -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Menu Items</div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800">@ViewBag.TotalMenuItems</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total Orders -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Total Orders</div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800">@ViewBag.TotalOrders</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Feedbacks -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Feedbacks</div>
+                    <div class="h6 mb-0 font-weight-bold text-gray-800">
+                        Total: @ViewBag.TotalFeedbacks
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Earnings + Pending Row -->
+    <div class="row">
+        <!-- Total Earnings -->
+        <div class="col-xl-4 col-md-6 mb-4">
+            <div class="card border-left-dark shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="text-xs font-weight-bold text-dark text-uppercase mb-1">Total Earnings</div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800">Rs. @ViewBag.TotalEarnings</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Monthly Earnings -->
+        <div class="col-xl-4 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Monthly Earnings</div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800">Rs. @ViewBag.MonthlyEarnings</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pending Orders -->
+        <div class="col-xl-4 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Pending Orders</div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800">@ViewBag.PendingOrders</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Row -->
+    <div class="row">
+        <!-- Earnings Overview -->
+        <div class="col-xl-8 col-lg-7">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Earnings Overview</h6>
+                </div>
+                <div class="card-body">
+                    <div class="chart-area">
+                        <canvas id="earningsAreaChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Revenue Sources -->
+        <div class="col-xl-4 col-lg-5">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Revenue Sources</h6>
+                </div>
+                <div class="card-body">
+                    <div class="chart-pie pt-4 pb-2">
+                        <canvas id="revenuePieChart"></canvas>
+                    </div>
+                    <div class="mt-4 text-center small">
+                        <span class="mr-2"><i class="fas fa-circle text-success"></i> CashOnPickup</span>
+                        <span class="mr-2"><i class="fas fa-circle text-info"></i> OnlineTransferOnPickup</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Orders -->
+    <div class="row">
+        <div class="col-lg-12 mb-4">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Recent Orders</h6>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Customer</th>
+                                    <th>Total</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                    <th>Payment</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var o in ViewBag.RecentOrders)
+                                {
+                                    <tr>
+                                        <td>@o.OrderId</td>
+                                        <td>@o.CustomerName</td>
+                                        <td>Rs. @o.TotalPrice</td>
+                                        <td>@o.OrderStatus</td>
+                                        <td>@o.OrderDate.ToString("dd-MMM-yyyy")</td>
+                                        <td>@o.PaymentMethod</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Earnings Area Chart
+        const areaCtx = document.getElementById('earningsAreaChart');
+        const monthlyData = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(ViewBag.MonthlyChartData));
+        new Chart(areaCtx, {
+            type: 'line',
+            data: {
+                labels: ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],
+                datasets: [{
+                    label: "Monthly Earnings",
+                    data: monthlyData,
+                    borderColor: "#4e73df",
+                    backgroundColor: "rgba(78,115,223,0.1)",
+                    fill: true,
+                    tension: 0.3,
+                    pointRadius: 3,
+                    pointHoverRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                animation: {
+                    duration: 1000,
+                    easing: 'easeOutQuart'
+                },
+                plugins: {
+                    legend: { display: true },
+                    tooltip: { mode: 'index', intersect: false }
+                },
+                scales: {
+                    x: { grid: { display: false } },
+                    y: {
+                        grid: { color: "rgba(0,0,0,0.05)" },
+                        ticks: {
+                            callback: function(value) { return 'Rs. ' + value; }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Revenue Pie Chart
+        const pieCtx = document.getElementById('revenuePieChart');
+        const revenueData = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(ViewBag.RevenueSources));
+        new Chart(pieCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ["CashOnPickup", "OnlineTransferOnPickup"],
+                datasets: [{
+                    data: revenueData,
+                    backgroundColor: ["#1cc88a", "#36b9cc"],
+                    hoverBackgroundColor: ["#17a673", "#2c9faf"],
+                                        borderColor: "#eaeaea"
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                animation: {
+                    duration: 1000,
+                    easing: 'easeOutQuart'
+                },
+                plugins: {
+                    legend: { position: 'bottom' },
+                    tooltip: { enabled: true }
+                },
+                cutout: '70%'
+            }
+        });
+    </script>
+}

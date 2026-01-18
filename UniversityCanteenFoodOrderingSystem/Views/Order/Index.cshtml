@@ -1,0 +1,152 @@
+﻿@model IEnumerable<UniversityCanteenFoodOrderingSystem.Models.Order>
+@using UniversityCanteenFoodOrderingSystem.Models
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_AdminMaster.cshtml";
+}
+
+<h1>Orders</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.OrderId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.User)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.User.FullName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.OrderDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.OrderStatus)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TotalPrice)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PaymentMethod)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IsDeletedByUser)
+            </th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.OrderId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.User.Id)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.User.FullName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.OrderDate)
+            </td>
+
+            <td>
+                <!-- Show status as a colored badge -->
+                @{
+                    string badgeClass = "bg-secondary"; // default
+
+                    if (item.OrderStatus == OrderStatus.Pending)
+                    {
+                        badgeClass = "bg-warning"; // yellow
+                    }
+                    else if (item.OrderStatus == OrderStatus.Preparing)
+                    {
+                        badgeClass = "bg-info"; // light blue
+                    }
+                    else if (item.OrderStatus == OrderStatus.Ready)
+                    {
+                        badgeClass = "bg-primary"; // dark blue
+                    }
+                    else if (item.OrderStatus == OrderStatus.Delivered)
+                    {
+                        badgeClass = "bg-success"; // green
+                    }
+                }
+                <span class="badge @badgeClass">@item.OrderStatus</span>
+
+                <!-- Dropdown to change status -->
+                <form asp-action="UpdateStatus" method="post" class="d-inline">
+                    <input type="hidden" name="orderId" value="@item.OrderId" />
+                    <select name="orderStatus" class="form-select form-select-sm d-inline w-auto"
+                            onchange="this.form.submit()">
+                            @foreach (OrderStatus status in Enum.GetValues(typeof(OrderStatus)))
+                            {
+                                if (status == item.OrderStatus)
+                                {
+                                    <option value="@status" selected>@status</option>
+                                }
+                                else
+                                {
+                                    <option value="@status">@status</option>
+                                }
+                            }
+
+                    </select>
+                </form>
+            </td>
+
+
+            <td>
+                @Html.DisplayFor(modelItem => item.TotalPrice)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PaymentMethod)
+            </td>
+            <td>
+                <span class="badge @(item.IsDeletedByUser ? "bg-danger" : "bg-success")">
+                    @(item.IsDeletedByUser ? "Remove by Customer" : "Available")
+                </span>
+            </td>
+
+
+            <td>
+                <a asp-action="Edit" class="btn btn-success" asp-route-id="@item.OrderId">Edit</a> |
+                <a asp-action="Details" class="btn btn-info" asp-route-id="@item.OrderId">Details</a> |
+                <a asp-action="Delete" class="btn btn-danger" asp-route-id="@item.OrderId">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+
+@section Scripts {
+
+    @* Alert on Role *@
+    @if (TempData["Message"] != null)
+    {
+        <script>
+            Swal.fire({
+                toast: true,
+                position: "top-end",
+                icon: "success",
+                title: "@TempData["Message"]",
+                showConfirmButton: false,
+                timer: 3000
+            });
+        </script>
+    }
+    else if (TempData["Error"] != null)
+    {
+        <script>
+            Swal.fire({
+                position: "top-end",
+                icon: "error",
+                title: "@TempData["Error"]",
+                showConfirmButton: true
+            });
+        </script>
+    }
+}

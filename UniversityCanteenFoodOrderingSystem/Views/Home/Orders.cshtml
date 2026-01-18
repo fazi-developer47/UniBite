@@ -1,0 +1,150 @@
+﻿@model List<UniversityCanteenFoodOrderingSystem.Models.Order>
+@using Microsoft.AspNetCore.Identity
+@using UniversityCanteenFoodOrderingSystem.Areas.Identity.Data
+@inject UserManager<AppUser> UserManager
+
+@{
+    ViewData["Title"] = "Orders";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var currentUser = await UserManager.GetUserAsync(User);
+}
+
+<h1 class="mb-4 text-primary fw-bold">📦 My Orders</h1>
+
+
+@if (Model != null && Model.Any())
+{
+    <div class="alert alert-success shadow-sm">
+        <i class="bi bi-info-circle"></i>
+        Your order has been placed successfully!
+        <strong>@currentUser.FullName</strong>
+        — Please tell this Order ID to canteen staff when receiving food with payment.
+    </div>
+
+    @if (Model.Any(o => o.OrderStatus == OrderStatus.Delivered && !o.IsDeletedByUser))
+    {
+        <form asp-controller="Home" asp-action="RemoveCompletedOrders" method="post" class="mb-3">
+            <button type="submit" class="btn btn-outline-danger btn-sm">
+                <i class="bi bi-box-arrow-down"></i> Remove Delivered Orders
+            </button>
+        </form>
+    }
+
+
+}
+
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info shadow-sm">You have no orders yet.</div>
+    <a asp-action="Index" class="btn btn-link">Back to Dashboard</a>
+}
+else
+{
+    <div class="row row-cols-1 row-cols-md-2 g-4">
+        @foreach (var order in Model)
+        {
+            <div class="col">
+                <div class="card shadow-sm border-0">
+                    <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                        <div>
+                            <span class="fw-bold">Order #@order.OrderId</span>
+                            <span class="badge 
+                                @(order.OrderStatus == OrderStatus.Pending ? "bg-warning" :
+                                  order.OrderStatus == OrderStatus.Preparing ? "bg-info" :
+                                  order.OrderStatus == OrderStatus.Ready ? "bg-success" :
+                                  order.OrderStatus == OrderStatus.Delivered ? "bg-primary" : "bg-secondary")">
+                                @order.OrderStatus
+                            </span>
+                        </div>
+                        <small class="text-muted">@order.OrderDate.ToString("dd-MMM-yyyy HH:mm")</small>
+                    </div>
+
+                    <div class="card-body">
+                        <p class="mb-1"><strong>Total:</strong> Rs. @order.TotalPrice</p>
+                        <p class="mb-1"><strong>Payment:</strong> @order.PaymentMethod</p>
+
+                        <button class="btn btn-sm btn-secondary mb-2" type="button" data-bs-toggle="collapse" data-bs-target="#items-@order.OrderId">
+                            View Items
+                        </button>
+
+                        <div class="collapse" id="items-@order.OrderId">
+                            <ul class="list-group list-group-flush">
+                                @foreach (var detail in order.OrderDetails)
+                                {
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <strong>@detail.MenuItem.Name</strong> × @detail.Quantity
+                                        </div>
+                                        <span class="text-success fw-bold">Rs. @(detail.Quantity * detail.Price)</span>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="card-footer bg-white d-flex justify-content-around align-items-center">
+                        <!-- Update Payment Method -->
+                        <form asp-controller="Home" asp-action="UpdateOrderPayment" method="post" class="d-flex align-items-center">
+                            <input type="hidden" name="OrderId" value="@order.OrderId" />
+                            <select name="PaymentMethod" class="form-select form-select-sm me-2">
+                                <option value="CashOnPickup" selected="@(order.PaymentMethod == PaymentMethod.CashOnPickup)">Cash On Pickup</option>
+                                <option value="OnlineTransferOnPickup" selected="@(order.PaymentMethod == PaymentMethod.OnlineTransferOnPickup)">Online Transfer On Pickup</option>
+                            </select>
+                            <button type="submit" class="btn btn-sm btn-primary w-50">
+                                <i class="bi bi-pencil"></i> Update
+                            </button>
+                        </form>
+
+                      
+                        <!-- Download Receipt -->
+                        @if (order.OrderStatus == OrderStatus.Ready || order.OrderStatus == OrderStatus.Delivered)
+                        {
+                            <a asp-controller="Home" asp-action="DownloadReceipt" asp-route-orderId="@order.OrderId"
+                               class="btn btn-sm btn-secondary" target="_blank">
+                                <i class="bi bi-file-earmark-arrow-down"></i> Download Receipt
+                            </a>
+                        }
+
+
+
+                    </div>
+
+                </div>
+            </div>
+        }
+    </div>
+    <a asp-action="Index" class="btn btn-link mt-5">Back to Dashboard</a>
+    
+}
+
+@section Scripts {
+
+    @*Alert on Item*@
+    @if (TempData["Message"] != null)
+    {
+        <script>
+            Swal.fire({
+                toast: true,
+                position: "top-end",
+                icon: "success",
+                title: "@TempData["Message"]",
+                showConfirmButton: false,
+                timer: 3000
+            });
+        </script>
+    }
+    else if (TempData["Error"] != null)
+    {
+        <script>
+            Swal.fire({
+                position: "top-end",
+                icon: "error",
+                title: "@TempData["Error"]",
+                showConfirmButton: true
+            });
+        </script>
+    }
+
+}

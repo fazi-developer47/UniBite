@@ -1,0 +1,138 @@
+﻿@model List<UniversityCanteenFoodOrderingSystem.Models.CartItem>
+@{
+    ViewData["Title"] = "Cart";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    // Ensure HasActiveOrder is always boolean
+    bool hasActiveOrder = ViewBag.HasActiveOrder != null && (bool)ViewBag.HasActiveOrder;
+}
+
+<h1 class="mb-4 text-primary fw-bold">🛒 Your Cart</h1>
+
+@if (Model == null || !Model.Any())
+{
+    <div class="alert alert-info shadow-sm">
+        <i class="bi bi-info-circle"></i> Your cart is empty.
+    </div>
+
+    <a asp-action="Index" class="btn btn-link mt-5">Back to Dashboard</a>
+
+}
+else
+{
+    <table class="table table-hover table-bordered shadow-sm align-middle">
+        <thead class="table-dark">
+            <tr>
+                <th>Item</th>
+                <th class="text-center">Quantity</th>
+                <th class="text-center">Price</th>
+                <th class="text-center">Total</th>
+                <th class="text-center">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td class="fw-bold">@item.Name</td>
+                    <td class="text-center">@item.Quantity</td>
+                    <td class="text-center">Rs. @item.Price</td>
+                    <td class="text-center text-success fw-bold">Rs. @(item.Quantity* item.Price)</td>
+                    <td class="text-center">
+                        <form asp-controller="Home" asp-action="RemoveFromCart" method="post"
+                              onsubmit="return confirmRemove(event, '@item.Name')">
+                            <input type="hidden" name="ItemId" value="@item.ItemId" />
+                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                <i class="bi bi-trash"></i> Remove
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <form asp-controller="Home" asp-action="ConfirmOrder" method="post" onsubmit="return confirmOrder(event)" class="mt-4">
+        <div class="mb-3">
+            @if (!hasActiveOrder)
+            {
+                <label class="form-label fw-bold">Select Payment Method</label>
+                <select name="PaymentMethod" class="form-select shadow-sm">
+                    <option value="CashOnPickup">Cash on Pickup</option>
+                    <option value="OnlineTransferOnPickup">Online Transfer on Pickup</option>
+                </select>
+            }
+            else
+            {
+                <p class="text-muted">Payment method already selected for your active order.</p>
+            }
+        </div>
+
+        <button type="submit" class="btn btn-success btn-lg shadow-sm">
+            <i class="bi bi-check-circle"></i> Confirm Order
+        </button>
+    </form>
+
+    <a asp-action="Index" class="btn btn-link mt-5">Back to Dashboard</a>
+
+}
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        function confirmOrder(e) {
+            e.preventDefault();
+            Swal.fire({
+                title: 'Confirm Order?',
+                text: "Do you want to place this order?",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, order it!',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    e.target.submit();
+                }
+            });
+            return false;
+        }
+
+        function confirmRemove(e, itemName) {
+            e.preventDefault();
+            Swal.fire({
+                title: 'Remove Item?',
+                text: "Do you want to remove " + itemName + " from your cart?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, remove it!',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    e.target.submit();
+                }
+            });
+            return false;
+        }
+    </script>
+
+    @if (TempData["Message"] != null)
+    {
+        <script>
+            Swal.fire({
+                icon: 'success',
+                title: "@TempData["Message"]",
+                showConfirmButton: true
+            });
+        </script>
+    }
+    else if (TempData["Error"] != null)
+    {
+        <script>
+            Swal.fire({
+                icon: 'error',
+                title: "@TempData["Error"]",
+                showConfirmButton: true
+            });
+        </script>
+    }
+}

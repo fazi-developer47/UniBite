@@ -1,0 +1,81 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    ViewData["Title"] = "User Management";
+    Layout = "~/Views/Shared/_AdminMaster.cshtml";
+}
+
+@model IEnumerable<UniversityCanteenFoodOrderingSystem.Areas.Identity.Data.AppUser>
+
+<h2>Users</h2>
+
+    <p>
+	    <a asp-action="Create" class="btn btn-primary">Add New</a>
+    </p>
+
+<div class="alert alert-info alert-dismissible fade show" role="alert">
+    Manage the users of the University Canteen Food Ordering System here.
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+
+
+<table class="table table-bordered">
+    <thead>
+        <tr class="table-active">
+            <th>Email</th>
+            <th>Full Name</th>
+            <th>User Type</th>
+            <th>Registered On</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model)
+        {
+            var rowClass = user.UserType == "Admin" ? "table-warning" : "";
+            <tr class="@rowClass"> 
+                <td>@user.Email</td>
+                <td>@user.FullName</td>
+                <td>@user.UserType</td>
+                <td>@user.RegisteredOn</td>
+                <td>
+                    <a asp-action="Edit" class="btn btn-success" asp-route-id="@user.Id">Edit</a> |
+                    <a asp-action="Details" class="btn btn-info" asp-route-id="@user.Id">Detail</a> |
+                    <a asp-action="Delete" class="btn btn-danger" asp-route-id="@user.Id">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+
+@section Scripts {
+
+    @*Alert on Item*@
+    @if (TempData["Message"] != null)
+    {
+        <script>
+            Swal.fire({
+                toast: true,
+                position: "top-end",
+                icon: "success",
+                title: "@TempData["Message"]",
+                showConfirmButton: false,
+                timer: 3000
+            });
+        </script>
+    }
+    else if (TempData["Error"] != null)
+    {
+        <script>
+            Swal.fire({
+                position: "top-end",
+                icon: "error",
+                title: "@TempData["Error"]",
+                showConfirmButton: true
+            });
+        </script>
+    }
+
+}

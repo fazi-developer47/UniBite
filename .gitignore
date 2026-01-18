@@ -1,0 +1,22 @@
+# Visual Studio cache
+.vs/
+*.vsidx
+
+# Build folders
+bin/
+obj/
+
+# User secrets and config
+*.user
+*.suo
+appsettings.Development.json
+
+# Database files
+*.mdf
+*.ldf
+*.bak
+
+# Others
+*.log
+*.tmp
+*.DS_Store

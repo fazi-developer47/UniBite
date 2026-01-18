@@ -1,0 +1,20 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+
+@{
+    ViewData["Title"] = "Create Role";
+    Layout = "~/Views/Shared/_AdminMaster.cshtml";
+}
+
+<h2>Create Role</h2>
+
+<form asp-action="Create" method="post">
+    <div class="form-group">
+        <label>Role Name</label>
+        <input type="text" name="roleName" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-success mt-2">Create</button>
+</form>
