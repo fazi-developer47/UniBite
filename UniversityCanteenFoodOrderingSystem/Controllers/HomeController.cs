@@ -28,7 +28,7 @@ namespace UniversityCanteenFoodOrderingSystem.Controllers
         {
             var user = await _userManager.GetUserAsync(User);
 
-            // ✅ Redirect admin users to Admin dashboard
+            //  Redirect admin users to Admin dashboard
             if (user != null && await _userManager.IsInRoleAsync(user, "Admin"))
             {
                 return RedirectToAction("Index", "Admin");
@@ -40,17 +40,17 @@ namespace UniversityCanteenFoodOrderingSystem.Controllers
 
             if (!string.IsNullOrEmpty(userId))
             {
-                // ✅ Only check orders if user is logged in
+                //  Only check orders if user is logged in
                 hasActiveOrder = _db.Orders.Any(o => o.UserId == userId &&
                     (o.OrderStatus == OrderStatus.Pending ||
                      o.OrderStatus == OrderStatus.Preparing ||
                      o.OrderStatus == OrderStatus.Ready));
             }
 
-            // ✅ Get all menu items
+            //  Get all menu items
             var menuItems = _db.MenuItems.ToList();
 
-            // ✅ Pass active order flag to view (always true/false, never null)
+            //  Pass active order flag to view (always true/false, never null)
             ViewBag.HasActiveOrder = hasActiveOrder;
 
             return View(menuItems);
@@ -164,28 +164,28 @@ namespace UniversityCanteenFoodOrderingSystem.Controllers
             var userId = _userManager.GetUserId(User);
             var cart = HttpContext.Session.GetObjectFromJson<List<CartItem>>("Cart");
 
-            // ✅ Check if cart is empty
+            //  Check if cart is empty
             if (cart == null || !cart.Any())
             {
                 TempData["Error"] = "Your cart is empty!";
                 return RedirectToAction("Cart");
             }
 
-            // ✅ Validate payment method
+            //  Validate payment method
             if (string.IsNullOrEmpty(paymentMethod) || !Enum.TryParse<PaymentMethod>(paymentMethod, true, out var parsedMethod))
             {
                 TempData["Error"] = "Please select a valid payment method.";
                 return RedirectToAction("Cart");
             }
 
-            // ✅ Check for existing pending order
+            //  Check for existing pending order
             var existingOrder = _db.Orders
                 .Include(o => o.OrderDetails)
                 .FirstOrDefault(o => o.UserId == userId && o.OrderStatus == OrderStatus.Pending);
 
             if (existingOrder != null)
             {
-                // ✅ Add items to existing order
+                //  Add items to existing order
                 foreach (var c in cart)
                 {
                     existingOrder.OrderDetails.Add(new OrderDetail
@@ -196,7 +196,7 @@ namespace UniversityCanteenFoodOrderingSystem.Controllers
                     });
                 }
 
-                // ✅ Update total price
+                //  Update total price
                 existingOrder.TotalPrice = existingOrder.OrderDetails.Sum(d => d.Quantity * d.Price);
                 _db.SaveChanges();
 
@@ -204,7 +204,7 @@ namespace UniversityCanteenFoodOrderingSystem.Controllers
             }
             else
             {
-                // ✅ Create new order
+                //  Create new order
                 var newOrder = new Order
                 {
                     UserId = userId,
@@ -227,7 +227,7 @@ namespace UniversityCanteenFoodOrderingSystem.Controllers
                 TempData["Message"] = $"Order placed! ID: {newOrder.OrderId}, Total: Rs. {newOrder.TotalPrice}";
             }
 
-            // ✅ Clear cart
+            //  Clear cart
             HttpContext.Session.Remove("Cart");
 
             return RedirectToAction("Orders");
@@ -247,21 +247,21 @@ namespace UniversityCanteenFoodOrderingSystem.Controllers
                 return RedirectToAction("Index");
             }
 
-            // ✅ Validate payment method safely
+            //  Validate payment method safely
             if (string.IsNullOrEmpty(paymentMethod) || !Enum.TryParse<PaymentMethod>(paymentMethod, true, out var parsedMethod))
             {
                 TempData["Error"] = "Please select a valid payment method.";
                 return RedirectToAction("Index");
             }
 
-            // ✅ Check if user has a pending order
+            //  Check if user has a pending order
             var existingOrder = _db.Orders
                 .Include(o => o.OrderDetails)
                 .FirstOrDefault(o => o.UserId == userId && o.OrderStatus == OrderStatus.Pending);
 
             if (existingOrder != null)
             {
-                // ✅ Add item to existing order
+                //  Add item to existing order
                 existingOrder.OrderDetails.Add(new OrderDetail
                 {
                     MenuItemId = menuItem.ItemId,
@@ -269,7 +269,7 @@ namespace UniversityCanteenFoodOrderingSystem.Controllers
                     Price = menuItem.Price
                 });
 
-                // ✅ Update total price
+                //  Update total price
                 existingOrder.TotalPrice = existingOrder.OrderDetails.Sum(d => d.Quantity * d.Price);
                 _db.SaveChanges();
 
@@ -277,7 +277,7 @@ namespace UniversityCanteenFoodOrderingSystem.Controllers
             }
             else
             {
-                // ✅ Create new order
+                //  Create new order
                 var order = new Order
                 {
                     UserId = userId,
@@ -295,7 +295,7 @@ namespace UniversityCanteenFoodOrderingSystem.Controllers
             }
                 };
 
-                // ✅ Calculate total price
+                //  Calculate total price
                 order.TotalPrice = order.OrderDetails.Sum(d => d.Quantity * d.Price);
 
                 _db.Orders.Add(order);
